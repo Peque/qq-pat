@@ -217,9 +217,9 @@ class Analizer:
             return self.series['rolling return '+str(period)]
             
         if external_df == False: 
-            data = self.data.dropna().resample('M', how=sum)
+            data = self.data.dropna().resample('M').sum()
         else:
-            data = input_df.dropna().resample('M', how=sum)
+            data = input_df.dropna().resample('M').sum()
             
         if external_df == False:
             self.series['rolling return '+str(period)] = pd.rolling_sum(data, int(period)).dropna()
@@ -237,9 +237,9 @@ class Analizer:
             return self.series['rolling sharpe ratio '+str(period)]
             
         if external_df == False: 
-            data = self.data.dropna().resample('M', how=sum)
+            data = self.data.dropna().resample('M').sum()
         else:
-            data = input_df.dropna().resample('M', how=sum)
+            data = input_df.dropna().resample('M').sum()
             
         rolling_mean = pd.rolling_mean(data, int(period))
         rolling_std = pd.rolling_std(data, int(period))
@@ -259,9 +259,9 @@ class Analizer:
             return self.series['rolling stddev '+str(period)]
             
         if external_df == False: 
-            data = self.data.dropna().resample('M', how=sum)
+            data = self.data.dropna().resample('M').sum()
         else:
-            data = input_df.dropna().resample('M', how=sum)
+            data = input_df.dropna().resample('M').sum()
             
         if external_df == False:
             self.series['rolling stddev '+str(period)] = pd.rolling_std(data, int(period)).dropna()
@@ -1508,7 +1508,7 @@ class Analizer:
         all_series = []
         for i in range(0, len(balance.columns)):
             series = pd.Series(balance.iloc[:,i])
-            annual_return = series.resample('A', how=lastValue).pct_change(fill_method='pad').dropna()
+            annual_return = series.resample('A').apply(lastValue).pct_change(fill_method='pad').dropna()
             all_series.append(annual_return)
         annual_returns = pd.concat(all_series, axis=1)
         if external_df == False:
@@ -1532,7 +1532,7 @@ class Analizer:
         all_series = []
         for i in range(0, len(balance.columns)):
             series = pd.Series(balance.iloc[:,i])
-            monthly_return = series.resample('M', how=lastValue).pct_change(fill_method='pad').dropna()
+            monthly_return = series.resample('M').apply(lastValue).pct_change(fill_method='pad').dropna()
             all_series.append(monthly_return)
         monthly_returns = pd.concat(all_series, axis=1)
         if external_df == False:
@@ -1556,7 +1556,7 @@ class Analizer:
         all_series = []
         for i in range(0, len(balance.columns)):
             series = pd.Series(balance.iloc[:,i])
-            weekly_return = series.resample('W', how=lastValue).pct_change(fill_method='pad').dropna()
+            weekly_return = series.resample('W').apply(lastValue).pct_change(fill_method='pad').dropna()
             all_series.append(weekly_return)
         weekly_returns = pd.concat(all_series, axis=1)
         if external_df == False:
@@ -1647,7 +1647,7 @@ class Analizer:
         
         for i in range(0, len(balance.columns)):
             series = pd.Series(balance.iloc[:,i])
-            weekly_balance = series.resample('W', how=lastValue)
+            weekly_balance = series.resample('W').apply(lastValue)
             sum_squares = 0.0
             max_value = weekly_balance[0]
             for value in weekly_balance:
@@ -1679,7 +1679,7 @@ class Analizer:
             
         for i in range(0, len(balance.columns)):
             series = pd.Series(balance.iloc[:,i])
-            monthly_balance = series.resample('M', how=lastValue)
+            monthly_balance = series.resample('M').apply(lastValue)
             monthly_balance_log = np.log(monthly_balance)
             angles = []
             for j in range(1, len(monthly_balance_log.index)):
